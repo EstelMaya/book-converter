@@ -1,0 +1,108 @@
+openapi: "3.0.3"
+
+info:
+  title: File Converter
+  version: "0.0.5"
+servers:
+  - url: /api/v1
+
+paths:
+  /:
+    get:
+      description: Get info about server status (simply returns 200)
+      summary: Healthcheck
+      operationId: server.handle_health
+      responses:
+        200:
+          description: everything is good
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "200 OK"
+  /whoami:
+    get:
+      description: Get current version of web service
+      summary: Who am I
+      operationId: server.handle_whoami
+      responses:
+        200:
+          description: service version and developers
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "AMAI file converter ver. 0.0.2\nImplemented by: k@amai.io\nAdapted by: p.dondukov@amai.io"
+  /convert/{file_type}:
+    parameters:
+      - name: file_type
+        in: path
+        required: true
+        schema:
+          type: string
+          example: epub
+    post:
+      description: Recognize and convert raw file
+      summary: Convert raw file
+      operationId: server.handle_convert
+      responses:
+        200:
+          description: Converted file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TextPart'
+                example: '#/components/examples/TextPart'
+        400:
+          description: Invalid file type
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Can't convert file to json. Extension .jpg is not supported.
+      requestBody:
+          description: File to convert
+          required: true
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+components:
+  examples:
+    TextPart:
+      value:
+        type: paragraph
+        attrs: 
+        content:
+          - type: "text"
+          - text: "Normal string"
+  schemas:
+    TextPart:
+      required:
+         - type
+         - content
+      properties:
+        type:
+          type: string
+          example: "heading"
+        attrs:
+          type: object
+          properties:
+            level:
+              type: integer
+              example: 1
+        content:
+          type: array
+          items:
+            required:
+              - type
+              - text
+            properties:
+                type:
+                  type: string
+                  example: "text"
+                text:
+                  type: string
+                  example: "Paragraph from your book."
+      type: object

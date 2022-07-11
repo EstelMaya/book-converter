@@ -1,0 +1,8 @@
+aiohttp
+gdown
+python-docx
+EbookLib
+beautifulsoup4
+pdfminer.six
+connexion[swagger-ui]
+aiohttp_jinja2
